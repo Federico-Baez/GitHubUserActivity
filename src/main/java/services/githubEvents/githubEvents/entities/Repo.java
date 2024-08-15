@@ -1,4 +1,4 @@
-package domain.services.githubEvents.entities;
+package services.githubEvents.githubEvents.entities;
 
 import lombok.Getter;
 

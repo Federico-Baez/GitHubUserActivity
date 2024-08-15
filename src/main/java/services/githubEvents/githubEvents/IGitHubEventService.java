@@ -1,6 +1,6 @@
-package domain.services.githubEvents;
+package services.githubEvents.githubEvents;
 
-import domain.services.githubEvents.entities.Event;
+import services.githubEvents.githubEvents.entities.Event;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

@@ -1,7 +1,8 @@
-package domain.services.githubEvents;
+package services.githubEvents.githubEvents;
 
 import domain.Repository;
-import domain.services.githubEvents.entities.Event;
+import exceptions.ApiException;
+import services.githubEvents.githubEvents.entities.Event;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,16 +33,34 @@ public class ServiceGitHubEvent{
     return instance;
   }
 
-  public List<Repository> getRepositories(String username) throws IOException {
+  public List<Repository> getRepositories(String username) throws IOException,ApiException {
     List<Repository> processedRepositories = new ArrayList<>();
-    String[] availableRepos = getRepoList(fetchUserEventList(username));
-    int i=0;
-    while(i < availableRepos.length) {
-      String repo = availableRepos[i];
-      Event[] repoEvents = fetchRepoEventList(username, repo);
-      processedRepositories.add(processRepoEvents(username, repo, repoEvents));
-      i++;
+
+    try{
+      Event[] availableEvents = fetchUserEventList(username);
+
+      if(availableEvents != null) {
+        if(availableEvents.length == 0) {
+          System.out.println("No recent events found for this user");
+        }else{
+          String[] availableRepos = getRepoList(availableEvents);
+          int i=0;
+          while(i < availableRepos.length) {
+            String repo = availableRepos[i];
+            Event[] repoEvents = fetchRepoEventList(username, repo);
+            processedRepositories.add(processRepoEvents(username, repo, repoEvents));
+            i++;
+          }
+        }
+      }else{
+        System.out.println("Username not found. Please check for typos or try a different username");
+      }
+    }catch(IOException e){
+      throw new ApiException("Error fetching data from the API. Please try again in a few seconds.", e);
     }
+
+
+
     return processedRepositories;
   }
 
